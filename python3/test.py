@@ -1,7 +1,11 @@
 import unittest
 import os
 import requests
-import run
+
+try:
+    from python3 import run
+except ModuleNotFoundError:
+    import run
 
 class TestRun(unittest.TestCase):
     def tearDown(self):
