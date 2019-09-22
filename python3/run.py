@@ -1,13 +1,20 @@
 import sys
 import json
-from subprocess import Popen, PIPE
+import subprocess
 import requests
 
 def run(testdata, timeout=None):
-    process = Popen(['python3', 'code.py'], stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
-    stdout, stderr = process.communicate(input=testdata)
-    process.wait(timeout=timeout)
-    return stdout
+    process = subprocess.Popen(['python3', 'code.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        stdout, stderr = process.communicate(input=testdata, timeout=timeout)
+        output = {'data': stdout.strip("\n"), 'status': 'EC'}
+    except subprocess.TimeoutExpired:
+        process.terminate()
+        process.wait(timeout=3)
+        process.stdout.close()
+        process.stderr.close()
+        output = {'data': None, 'status': 'TLE'}
+    return output
 
 def main(problem_src_url, code_src_url, result_submission_url=None, communication_key=None):
     if communication_key == None:
@@ -41,8 +48,9 @@ def main(problem_src_url, code_src_url, result_submission_url=None, communicatio
 
     results = []
     for i in testdata['testcases']:
-        result = run(i['data'])
-        results.append({'id': i['id'], 'data': result.strip("\n")})
+        result = run(i['data'], problem_timelimit)
+        result['id'] = i['id']
+        results.append(result)
 
     response = {
         'type': 'testdata_output',
