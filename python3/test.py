@@ -37,3 +37,13 @@ class TestRun(unittest.TestCase):
         testdata_output_url = base_url + "testdata_out.json"
 
         self.run_and_compare_with_expected_output(problem_src_url, code_src_url, testdata_output_url)
+
+    def test_running_hudab(self):
+        # https://gist.github.com/hillcrestpaul0719/993709b1fb17c8665d39e3382e3ca49a
+
+        base_url = "https://gist.githubusercontent.com/hillcrestpaul0719/993709b1fb17c8665d39e3382e3ca49a/raw/"
+        problem_src_url = base_url + "hudab_problem.json"
+        code_src_url = base_url + "hudab.py"
+        testdata_output_url = base_url + "testdata_out.json"
+
+        self.run_and_compare_with_expected_output(problem_src_url, code_src_url, testdata_output_url)

@@ -4,16 +4,14 @@ import subprocess
 import requests
 
 def run(testdata, timeout=None):
-    process = subprocess.Popen(['python3', 'code.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     try:
-        stdout, stderr = process.communicate(input=testdata, timeout=timeout)
-        output = {'data': stdout.strip("\n"), 'status': 'EC'}
-    except subprocess.TimeoutExpired:
-        process.terminate()
-        process.wait(timeout=3)
-        process.stdout.close()
-        process.stderr.close()
+        process = subprocess.run(['python3', 'code.py'], input=testdata, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True, timeout=timeout)
+        output = {'data': process.stdout.strip("\n"), 'status': 'EC'}
+    except subprocess.TimeoutExpired as e:
         output = {'data': None, 'status': 'TLE'}
+    except subprocess.CalledProcessError as e:
+        exception_type = e.stderr.strip("\n").split("\n")[-1].split(":")[0]
+        output = {'data': exception_type, 'status': 'IR'}
     return output
 
 def main(problem_src_url, code_src_url, result_submission_url=None, communication_key=None):
