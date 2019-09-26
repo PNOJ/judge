@@ -1,6 +1,6 @@
 name: Python3
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -20,3 +20,11 @@ jobs:
     - name: Test
       run: |
         python3 -m unittest python3/test.py
+  # build:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #
+  #   steps:
+  #   - uses: actions/checkout@v1
+  #   - name: Build the Docker image
+  #     run: docker build python3/ --tag ds:
