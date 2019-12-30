@@ -1,9 +1,13 @@
 import subprocess
+import time
 
-def run(testdata, timeout=None):
+def run(testdata, submission_file_path, timeout=None):
     try:
-        process = subprocess.run(['python3', 'code.py'], input=testdata, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True, timeout=timeout)
-        output = {'data': process.stdout.strip("\n"), 'status': 'EC'}
+        start_time = time.time()
+        process = subprocess.run(['python3', submission_file_path], input=testdata, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True, timeout=timeout)
+        end_time = time.time()
+        duration = end_time - start_time
+        output = {'data': process.stdout.strip("\n"), 'status': 'EC', 'time': duration}
     except subprocess.TimeoutExpired as e:
         output = {'data': None, 'status': 'TLE'}
     except subprocess.CalledProcessError as e:
