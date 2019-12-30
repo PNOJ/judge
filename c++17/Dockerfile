@@ -1,10 +1,12 @@
-FROM python:3.7.4-alpine3.10
+FROM gcc:9.2.0
 
 LABEL maintainer="Paul (Kyunghan) Lee <contact@paullee.dev>"
 
 WORKDIR /app
 
 COPY . /app
+
+RUN apt-get update && apt-get install -y python-pip
 
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
