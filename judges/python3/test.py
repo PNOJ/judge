@@ -5,6 +5,9 @@ import shutil
 import os
 import requests
 import yaml
+import info
+
+problems_root = "https://paullee-cdn.nyc3.digitaloceanspaces.com/pnoj/problems/"
 
 class JudgeTest(unittest.TestCase):
     def setUp(self):
@@ -13,14 +16,15 @@ class JudgeTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree("./problem")
         os.remove("problem.zip")
-        os.remove("submission.py")
+        
+        info.garbage_collector()
 
-    def fetch_problem_and_test(self, problem_root, language, solution_status):
-        problem_root = problem_root.strip("/")
+    def fetch_problem_and_test(self, problems_root, problem_name, language, solution_status):
+        problem_root = "{0}/{1}".format(problems_root.strip("/"), problem_name)
 
         args = {}
         args['problem_file_url'] = "{0}/problem.zip".format(problem_root)
-        args['submission_file_url'] = "{0}/solutions/{1}/{2}/solution.py".format(problem_root, language, solution_status)
+        args['submission_file_url'] = "{0}/solutions/{1}/{2}/solution{3}".format(problem_root, language, solution_status, info.file_ext)
         args['callback_url'] = 'https://example.com/callback'
 
         try:
@@ -51,19 +55,19 @@ class JudgeTest(unittest.TestCase):
         self.assertEqual(expected_result, result)
 
     def test_helloworld_ac(self):
-        self.fetch_problem_and_test("https://paullee-cdn.nyc3.digitaloceanspaces.com/pnoj/problems/helloworld/", "py3", "ac")
+        self.fetch_problem_and_test(problems_root, "helloworld", info.language_code, "ac")
 
     def test_aplusb_ac(self):
-        self.fetch_problem_and_test("https://paullee-cdn.nyc3.digitaloceanspaces.com/pnoj/problems/aplusb/", "py3", "ac")
+        self.fetch_problem_and_test(problems_root, "aplusb", info.language_code, "ac")
 
     def test_aplusb_wa(self):
-        self.fetch_problem_and_test("https://paullee-cdn.nyc3.digitaloceanspaces.com/pnoj/problems/aplusb/", "py3", "wa")
+        self.fetch_problem_and_test(problems_root, "aplusb", info.language_code, "wa")
 
     def test_aplusb_tle(self):
-        self.fetch_problem_and_test("https://paullee-cdn.nyc3.digitaloceanspaces.com/pnoj/problems/aplusb/", "py3", "tle")
+        self.fetch_problem_and_test(problems_root, "aplusb", info.language_code, "tle")
 
     def test_aplusb_ir(self):
-        self.fetch_problem_and_test("https://paullee-cdn.nyc3.digitaloceanspaces.com/pnoj/problems/aplusb/", "py3", "ir")
+        self.fetch_problem_and_test(problems_root, "aplusb", info.language_code, "ir")
 
 if __name__ == "__main__":
     unittest.main()

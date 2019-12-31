@@ -5,6 +5,7 @@ import zipfile
 import yaml
 import shutil
 import traceback
+import info
 
 def download(url, path):
     res = requests.get(url)
@@ -16,7 +17,7 @@ def download(url, path):
 
 def main(args):
     download(args['problem_file_url'], "problem.zip")
-    download(args['submission_file_url'], "submission.py")
+    download(args['submission_file_url'], "submission{0}".format(info.file_ext))
 
     with zipfile.ZipFile("problem.zip", "r") as zip_ref:
         zip_ref.extractall("problem")
@@ -26,7 +27,7 @@ def main(args):
     problem_manifest_file.close()
 
     grader_args = problem_manifest['judge']['args']
-    grader_args['submission_file'] = os.path.abspath("submission.py")
+    grader_args['submission_file'] = os.path.abspath("submission{0}".format(info.file_ext))
     grader_args['timeout'] = problem_manifest['metadata']['limit']['time']
     grader_args['grader_base_path'] = os.path.join(os.path.dirname(__file__), "problem")
 
