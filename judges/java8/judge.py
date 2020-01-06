@@ -6,6 +6,7 @@ import yaml
 import shutil
 import traceback
 import info
+import json
 
 def download(url, path):
     res = requests.get(url)
@@ -51,6 +52,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--submission_file_url")
+    parser.add_argument("--problem_file_url")
+    parser.add_argument("--callback_url")
     args = vars(parser.parse_args())
     result = main(args)
     request = requests.post(args['callback_url'], json=result)

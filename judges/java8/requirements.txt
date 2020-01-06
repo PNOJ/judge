@@ -1,0 +1,11 @@
+certifi==2019.11.28
+chardet==3.0.4
+Django==2.2.5
+idna==2.8
+pytz==2019.2
+PyYAML==5.2
+requests==2.22.0
+responses==0.10.9
+six==1.13.0
+sqlparse==0.3.0
+urllib3==1.25.7

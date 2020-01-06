@@ -1,4 +1,4 @@
-FROM gcc:9.2.0
+FROM alpine:latest
 
 LABEL maintainer="Paul (Kyunghan) Lee <contact@paullee.dev>"
 
@@ -6,8 +6,8 @@ WORKDIR /app
 
 COPY . /app
 
-RUN apt-get update && apt-get install -y python-pip
+RUN apk add python3 g++
 
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 
 ENTRYPOINT ["python3", "judge.py"]
