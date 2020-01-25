@@ -91,6 +91,8 @@ def test(testcases_dir, submission_file_path, timeout):
 
     if final_verdict == None:
         final_verdict = 'IE'
+    
+    result['status'] = final_verdict
 
     return result
 
