@@ -29,7 +29,8 @@ def main(args):
 
     grader_args = problem_manifest['judge']['args']
     grader_args['submission_file'] = os.path.abspath("submission{0}".format(info.file_ext))
-    grader_args['timeout'] = problem_manifest['metadata']['limit']['time']
+    grader_args['time_limit'] = problem_manifest['metadata']['limit']['time']
+    grader_args['memory_limit'] = problem_manifest['metadata']['limit']['memory']
     grader_args['grader_base_path'] = os.path.join(os.path.dirname(__file__), "problem")
 
     if 'url' in problem_manifest['judge']['grader']:
@@ -57,6 +58,7 @@ if __name__ == "__main__":
     parser.add_argument("--callback_url")
     args = vars(parser.parse_args())
     result = main(args)
-    request = requests.post(args['callback_url'], json=result)
+    if args['callback_url'] != None:
+        request = requests.post(args['callback_url'], json=result)
     result_json = json.dumps(result)
     print(result_json)

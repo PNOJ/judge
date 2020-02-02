@@ -6,7 +6,9 @@ WORKDIR /app
 
 COPY . /app
 
-RUN apk add python3 g++
+RUN apk add python3 g++ python3-dev
+
+RUN apk add --update gcc libc-dev linux-headers && rm -rf /var/cache/apk/*
 
 RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 
