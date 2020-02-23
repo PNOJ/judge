@@ -1,6 +1,6 @@
 import argparse
 import subprocess
-from runner import run
+from runner import compile_submission, run
 import os
 import yaml
 import json
@@ -52,16 +52,18 @@ def get_single_testcase(testcase_dir, submission_file_path, time_limit=None, mem
 
         result = run(testcase_input, submission_file_path, time_limit, memory_limit)
     else:
-        result = {'status': 'AB', 'data': None, 'resource': {'time': None, 'memory': None}}
+        result = {'status': 'AB', 'output': None, 'resource': {'time': None, 'memory': None}}
 
-    if result['data']:
-        result['data'] = result['data'].strip("\n")
+    if result['output']:
+        result['output'] = result['output'].strip("\n")
 
     if result['status'] == 'EC':
-        if result['data'] == testcase_output:
+        if result['output'] == testcase_output:
             result['status'] = 'AC'
         else:
             result['status'] = 'WA'
+
+    del result['output']
 
     result['name'] = testcase_name
     result['type'] = 'testcase'
@@ -141,6 +143,18 @@ def main(args):
     submission_file_path = args['submission_file']
     time_limit = args['time_limit']
     memory_limit = args['memory_limit']
+
+    compilation_result = compile_submission(submission_file_path)
+    if compilation_result['status'] == 'CE':
+        compilation_result['score'] = {}
+        compilation_result['score']['scored'] = None
+        compilation_result['score']['scoreable'] = None
+        compilation_result['resource'] = {}
+        compilation_result['resource']['time'] = None
+        compilation_result['resource']['memory'] = None
+        compilation_result['batches'] = []
+        compilation_result['type'] = 'result'
+        return compilation_result
 
     result = test(testcases_dir, submission_file_path, time_limit, memory_limit)
 

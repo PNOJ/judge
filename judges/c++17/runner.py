@@ -2,18 +2,29 @@ import subprocess
 import time
 import os
 import psutil
+import sys
+
+def get_base_dir(submission_file_path):
+        base_dir = os.path.dirname(submission_file_path)
+
+def get_base_dir_contents(submission_file_path):
+    base_dir = get_base_dir(submission_file_path)
+    base_dir_contents = os.listdir(base_dir)
+    return base_dir_contents
+
+def compile_submission(submission_file_path):
+    try:
+        compile_process = subprocess.run(['g++', '-o', 'submission', submission_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
+    except subprocess.TimeoutExpired:
+        return {'message': 'Compilation Timed Out', 'status': 'CE'}
+    stdout = compile_process.stdout
+    stderr = compile_process.stderr
+    if compile_process.returncode == 0:
+        return {'status': 'CC'}
+    else:
+        return {'message': None, 'status': 'CE'}
 
 def run(testdata, submission_file_path, time_limit=None, memory_limit=None):
-    try:
-        base_dir = os.path.dirname(submission_file_path)
-        base_dir_contents = os.listdir(base_dir)
-        
-        if not "submission" in base_dir_contents:
-            subprocess.run(['g++', '-o', 'submission', submission_file_path])
-    except subprocess.CalledProcessError as e:
-        output = {'data': None, 'status': 'CE'}
-        return output
-
     cpu_time = 0
     memory = 0
     # process = subprocess.run(["./submission"], input=testdata, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True, timeout=timeout)
@@ -33,22 +44,26 @@ def run(testdata, submission_file_path, time_limit=None, memory_limit=None):
             process.stdout.close()
             process.stderr.close()
             process.kill()
-            output = {'data': None, 'status': 'TLE', 'resource': {'time': real_time, 'memory': memory}}
-            return output
+            result = {'output': None, 'status': 'TLE', 'resource': {'time': real_time, 'memory': memory}}
+            return result
         elif memory_limit != None and memory > memory_limit:
             process.stdout.close()
             process.stderr.close()
             process.kill()
-            output = {'data': None, 'status': 'MLE', 'resource': {'time': real_time, 'memory': memory}}
-            return output
+            result = {'output': None, 'status': 'MLE', 'resource': {'time': real_time, 'memory': memory}}
+            return result
 
     if process.returncode == 0:
-        output = {'data': process.stdout.read().strip("\n"), 'status': 'EC', 'resource': {'time': real_time, 'memory': memory}}
+        output = process.stdout.read()
         process.stdout.close()
         process.stderr.close()
-        return output
+        if sys.getsizeof(output) > 67108864:
+            result = {'output': None, 'status': 'OLE', 'resource': {'time': real_time, 'memory': memory}}
+        else:
+            result = {'output': output.strip("\n"), 'status': 'EC', 'resource': {'time': real_time, 'memory': memory}}
+        return result
     else:
         process.stdout.close()
         process.stderr.close()
-        output = {'data': None, 'status': 'IR', 'resource': {'time': real_time, 'memory': memory}}
-        return output
+        result = {'output': None, 'status': 'IR', 'resource': {'time': real_time, 'memory': memory}}
+        return result

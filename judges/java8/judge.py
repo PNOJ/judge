@@ -47,7 +47,7 @@ def main(args):
         submission_result = problem.grader(grader_args)
     except Exception as e:
         traceback.print_exc()
-        submission_result = {'status': 'IE', 'data': str(e)}
+        submission_result = {'status': 'IE', 'message': str(e)}
 
     return submission_result
 

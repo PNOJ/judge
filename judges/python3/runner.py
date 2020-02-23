@@ -1,6 +1,19 @@
 import subprocess
 import time
 import psutil
+import sys
+
+def compile_submission(submission_file_path):
+    try:
+        compile_process = subprocess.run(["python3", "-m", "py_compile", submission_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10, text=True)
+    except subprocess.TimeoutExpired:
+        return {'message': 'Compilation Timed Out', 'status': 'CE'}
+    stdout = compile_process.stdout
+    stderr = compile_process.stderr
+    if compile_process.returncode == 0:
+        return {'status': 'CC'}
+    else:
+        return {'message': stderr, 'status': 'CE'}
 
 def run(testdata, submission_file_path, time_limit=None, memory_limit=None):
     cpu_time = 0
@@ -22,23 +35,27 @@ def run(testdata, submission_file_path, time_limit=None, memory_limit=None):
             process.stdout.close()
             process.stderr.close()
             process.kill()
-            output = {'data': None, 'status': 'TLE', 'resource': {'time': real_time, 'memory': memory}}
-            return output
+            result = {'output': None, 'status': 'TLE', 'resource': {'time': real_time, 'memory': memory}}
+            return result
         elif memory_limit != None and memory > memory_limit:
             process.stdout.close()
             process.stderr.close()
             process.kill()
-            output = {'data': None, 'status': 'MLE', 'resource': {'time': real_time, 'memory': memory}}
-            return output
+            result = {'output': None, 'status': 'MLE', 'resource': {'time': real_time, 'memory': memory}}
+            return result
 
     if process.returncode == 0:
-        output = {'data': process.stdout.read().strip("\n"), 'status': 'EC', 'resource': {'time': real_time, 'memory': memory}}
+        output = process.stdout.read()
         process.stdout.close()
         process.stderr.close()
-        return output
+        if sys.getsizeof(output) > 67108864:
+            result = {'output': None, 'status': 'OLE', 'resource': {'time': real_time, 'memory': memory}}
+        else:
+            result = {'output': output.strip("\n"), 'status': 'EC', 'resource': {'time': real_time, 'memory': memory}}
+        return result
     else:
         exception_type = process.stderr.read().strip("\n").split("\n")[-1].split(":")[0]
         process.stdout.close()
         process.stderr.close()
-        output = {'data': exception_type, 'status': 'IR', 'resource': {'time': real_time, 'memory': memory}}
-        return output
+        result = {'output': exception_type, 'status': 'IR', 'resource': {'time': real_time, 'memory': memory}}
+        return result 

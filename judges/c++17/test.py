@@ -54,6 +54,11 @@ class JudgeTest(unittest.TestCase):
             print("Resource field is not found on the expected result.")
         del result['resource']
 
+        if result['status'] == 'CE':
+            del result['message']
+            if 'message' in expected_result:
+                del expected_result['message']
+
         for batch in range(0, len(expected_result['batches'])):
             try:
                 del expected_result['batches'][batch]['resource']
@@ -79,6 +84,7 @@ class JudgeTest(unittest.TestCase):
                 del result['batches'][batch]['testcases'][testcase]['resource']
 
         if not expected_result == result:
+            print(solution_status)
             print(json.dumps(orig_result))
         self.assertEqual(expected_result, result)
 
@@ -99,6 +105,12 @@ class JudgeTest(unittest.TestCase):
 
     def test_aplusb_ir(self):
         self.fetch_problem_and_test(problems_root, "aplusb", info.language_code, "ir")
+
+    def test_aplusb_ce(self):
+        self.fetch_problem_and_test(problems_root, "aplusb", info.language_code, "ce")
+
+    def test_aplusb_ole(self):
+        self.fetch_problem_and_test(problems_root, "aplusb", info.language_code, "ole")
 
 if __name__ == "__main__":
     unittest.main()
