@@ -6,7 +6,7 @@ import shutil
 import psutil
 import sys
 
-public_class_regex = re.compile(r'public class ([^ \n]*)')
+public_class_regex = re.compile(r'public class ([^ \n-/\\{}"\'`~<>]*)')
 
 def get_public_class_name(submission_file_path):
     base_dir = os.path.dirname(submission_file_path)

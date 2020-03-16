@@ -32,6 +32,7 @@ def run(testdata, submission_file_path, time_limit=None, memory_limit=None):
     process.stdin.write(testdata)
     process.stdin.close()
     real_start_time = time.time()
+    real_time = 0
     while process.poll() == None:
         process_info = psutil.Process(pid=process.pid)
         process_cpu_time_info = process_info.cpu_times()
