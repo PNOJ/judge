@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - 'judges/c++17/*'
+      - 'judges/cpp17/*'
 jobs:
   build:
     name: build
@@ -15,7 +15,7 @@ jobs:
         uses: docker/build-push-action@v1.0.1
         with:
           repository: pnoj/cpp17
-          path: judges/c++17
+          path: judges/cpp17
           add_git_labels: true
           tag_with_sha: true
           tags: latest
