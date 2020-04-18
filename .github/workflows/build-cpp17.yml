@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - 'judges/cpp17/*'
+      - 'judges/cpp17/**'
 jobs:
   build:
     name: build

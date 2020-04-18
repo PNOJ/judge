@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - 'judges/java8/*'
+      - 'judges/java8/**'
 jobs:
   build:
     name: build
