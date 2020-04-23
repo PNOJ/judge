@@ -1,4 +1,4 @@
-FROM openjdk:8-alpine3.9
+FROM python:3.8-alpine
 
 LABEL maintainer="Paul (Kyunghan) Lee <contact@paullee.dev>"
 
@@ -6,9 +6,9 @@ WORKDIR /app
 
 COPY . /app
 
-RUN apk add python3 python3-dev
-
 RUN apk add --update gcc libc-dev linux-headers && rm -rf /var/cache/apk/*
+
+RUN apk add ghc
 
 RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 
